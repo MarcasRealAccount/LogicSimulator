@@ -1,4 +1,4 @@
-local ProjectName = "PremakeProject"
+local ProjectName = "LogicSimulator"
 
 local globalApp = require("premake/app")
 local app = globalApp.local_app(true)

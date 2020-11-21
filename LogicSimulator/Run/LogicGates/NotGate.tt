@@ -1,0 +1,5 @@
+name=not
+inputs=[I]
+outputs=[Q]
+{I=0,Q=1}
+{I=1,Q=0}

@@ -23,6 +23,7 @@ function globalApp.third_party_library(name, currentPath, verbose)
 	
 	local module_path = "Third_Party/" .. name .. ".lua"
 	local app = assert(loadfile(module_path))(currentPath .. "Third_Party/" .. name .. "/", verbose)
+	app.location = ""
 	app.warnings = "Off"
 	apps[app.name] = app
 	
@@ -35,7 +36,6 @@ function globalApp.local_app(verbose)
 	end
 	
 	local app = assert(loadfile("premakeApp.lua"))("", verbose)
-	app.group = "Apps"
 	apps[app.name] = app
 	
 	return app
@@ -56,7 +56,7 @@ function globalApp.app(name, currentPath, verbose)
 	app.currentPath = currentPath
 	app.dependencies = {}
 	app.group = "Libs"
-	app.location = "Build/%{_ACTION}"
+	app.location = name .. "/"
 	app.objectDir = "Output/" .. name .. "/Obj/"
 	app.outputDir = "Output/" .. name .. "/Bin/"
 	app.libraryDir = "Output/" .. name .. "/Lib/"
@@ -169,6 +169,8 @@ local function premakeApp(app, verbose)
 		files({
 			app.currentPath .. app.includeDir .. "**.h",
 			app.currentPath .. app.includeDir .. "**.hpp",
+			app.currentPath .. app.sourceDir .. "**.h",
+			app.currentPath .. app.sourceDir .. "**.hpp",
 			app.currentPath .. app.sourceDir .. "**.c",
 			app.currentPath .. app.sourceDir .. "**.cpp"
 		})
@@ -183,9 +185,9 @@ local function premakeApp(app, verbose)
 	end
 	
 	if project().kind == "StaticLib" or project().kind == "SharedLib" then
-		targetdir(app.currentPath .. app.libraryDir)
+		targetdir(app.libraryDir)
 	else
-		targetdir(app.currentPath .. app.outputDir)
+		targetdir(app.outputDir)
 	end
 	
 	filter("configurations:Debug")

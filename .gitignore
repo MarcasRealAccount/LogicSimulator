@@ -5,11 +5,16 @@
 /.vs/
 /Build/
 
-/*.gradle
-/*.iml
-/*.sln
-/*.workspace
-/*.xcworkspace
+*.lib
+*.dll
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.gradle
+*.iml
+*.sln
+*.workspace
+*.xcworkspace
 /gradle/wrapper/gradle-wrapper.jar
 /gradle/wrapper/gradle-wrapper.properties
 /gradle.properties
@@ -17,10 +22,9 @@
 /gradlew.bat
 /local.properties
 /Makefile
-/*.Make
+*.Make
 
 premake5.exe
 premake5.bat
 
-/third_party/SubApp/Build/
-/third_party/SubLib/Build/
+/Output/
