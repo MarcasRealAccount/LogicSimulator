@@ -10,10 +10,6 @@
 
 #include "Rendering/Apis/OpenGL/GLHelpers.h"
 
-#define WIN_LEAN_AND_MEAN
-#include <Windows.h>
-#include <iostream>
-
 OpenGLRenderer::OpenGLRenderer(Window* window)
 	: Renderer(window) {}
 

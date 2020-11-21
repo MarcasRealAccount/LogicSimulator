@@ -1,7 +1,5 @@
 #include "Rendering/Apis/OpenGL/Shader/OpenGLShaderData.h"
 
-#include <iostream>
-
 OpenGLShaderData::OpenGLShaderData(Shader* shader)
 	: ShaderData(shader) {}
 
@@ -59,7 +57,7 @@ void OpenGLShaderData::InitGLData() {
 		GLint length;
 		GLchar infoLog[1024];
 		glGetProgramInfoLog(this->programID, 1024, &length, infoLog);
-		std::cerr << GetShader<Shader>()->GetId() << " link failed:" << std::endl << infoLog;
+		OpenGLLogger.LogError("%s link failed:\n%s", GetShader<Shader>()->GetId().c_str(), infoLog);
 		for (auto& shader : shaders) {
 			glDetachShader(this->programID, shader.second);
 			glDeleteShader(shader.second);
@@ -119,7 +117,7 @@ uint32_t OpenGLShaderData::LoadShader(ShaderType type) {
 		GLint length;
 		GLchar infoLog[1024];
 		glGetShaderInfoLog(shaderID, 1024, &length, infoLog);
-		std::cerr << GetShaderTypeName(type) << " at " << "Shaders/" << GetShader<Shader>()->GetId() << GetShaderTypeExtensionName(type) << " compile failed:" << std::endl << infoLog;
+		OpenGLLogger.LogError("%s at %s compile failed:\n%s", GetShaderTypeName(type), ("Shaders/" + GetShader<Shader>()->GetId() + GetShaderTypeExtensionName(type)).c_str(), infoLog);
 		glDeleteShader(shaderID);
 		delete[] buf;
 		return 0;

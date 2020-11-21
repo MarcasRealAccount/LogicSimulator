@@ -21,7 +21,7 @@ const glm::fmat4* OrthoCamera::GetProjectionMatrix() {
 
 const glm::fmat4* OrthoCamera::GetProjectionViewMatrix() {
 	if (this->size != this->pSize || this->width != this->pWidth || this->height != this->pHeight || this->transform.ShouldUpdateTransform()) {
-		this->cachedProjectionViewMatrix = *GetProjectionMatrix() * transform.GetTransformMatrix();
+		this->cachedProjectionViewMatrix = *GetProjectionMatrix() * transform.GetTransformMatrix(true);
 	}
 	return &this->cachedProjectionViewMatrix;
 }

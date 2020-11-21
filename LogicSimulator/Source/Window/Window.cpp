@@ -1,6 +1,6 @@
 #include "Window/Window.h"
 
-#include <iostream>
+Logger Window::logger("Window");
 
 void Window::DefaultWindowHints() {
 	this->windowHints.clear();
@@ -110,7 +110,7 @@ void Window::SwapInterval(uint32_t interval) {
 }
 
 void Window::ErrorCallback(int errorCode, const char* description) {
-	std::cerr << "GLFW Error: " << errorCode << "\n\t" << description << std::endl;
+	Window::logger.LogError("GLFW Error: %d\n\t%s", errorCode, description);
 }
 
 void Window::WindowPosCallback(GLFWwindow* windowPtr, int x, int y) {

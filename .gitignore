@@ -28,3 +28,4 @@ premake5.exe
 premake5.bat
 
 /Output/
+/LogicSimulator/Run/Logs

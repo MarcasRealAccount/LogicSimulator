@@ -4,6 +4,7 @@
 Scene* Scene::mainScene;
 
 void Scene::AttachEntity(Entity* entity) {
+	std::unique_lock<std::mutex> mlock(this->lock);
 	if (entity->scene) entity->scene->DetachEntity(entity);
 	this->entities.push_back(entity);
 	entity->scene = this;
@@ -12,6 +13,7 @@ void Scene::AttachEntity(Entity* entity) {
 void Scene::DetachEntity(Entity* entity) {
 	if (entity->scene != this) return;
 
+	std::unique_lock<std::mutex> mlock(this->lock);
 	auto itr = this->entities.begin();
 	while (itr != this->entities.end()) {
 		if (*itr == entity) {

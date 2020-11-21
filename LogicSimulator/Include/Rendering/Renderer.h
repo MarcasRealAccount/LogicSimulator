@@ -4,6 +4,7 @@
 #include "Rendering/Mesh/Mesh.h"
 #include "Rendering/Shader/Material.h"
 #include "Rendering/Shader/Shader.h"
+#include "Utilities/Logger.h"
 
 #include <stdint.h>
 #include <queue>
@@ -81,4 +82,7 @@ protected:
 	std::queue<std::pair<Scene*, Camera*>> scenesToAddToRender;
 	std::queue<std::pair<Scene*, Camera*>> scenesToRemoveFromRender;
 	std::mutex lock;
+
+private:
+	static Logger logger;
 };

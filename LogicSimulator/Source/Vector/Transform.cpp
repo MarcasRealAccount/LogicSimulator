@@ -6,12 +6,12 @@ bool Transform::ShouldUpdateTransform() const {
 	return this->position != this->pPosition || this->rotation != this->pRotation || this->scale != this->pScale;
 }
 
-const glm::fmat4& Transform::GetTransformMatrix() {
+const glm::fmat4& Transform::GetTransformMatrix(bool negativeTranslation) {
 	if (ShouldUpdateTransform()) {
 		this->pPosition = this->position;
 		this->pRotation = this->rotation;
 		this->pScale = this->scale;
-		this->cachedTransformationMatrix = glm::translate(this->position);
+		this->cachedTransformationMatrix = glm::translate(negativeTranslation ? -this->position : this->position);
 		this->cachedTransformationMatrix *= static_cast<glm::fmat4>(this->rotation);
 		this->cachedTransformationMatrix = glm::scale(this->cachedTransformationMatrix, this->scale);
 	}

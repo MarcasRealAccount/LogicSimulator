@@ -6,6 +6,8 @@
 class Entity;
 class Camera;
 
+class Renderer;
+
 struct Scene {
 public:
 	void AttachEntity(Entity* entity);
@@ -16,13 +18,16 @@ public:
 
 	const std::vector<Entity*>& GetEntities() const;
 
+	friend Renderer;
+
 public:
 	static void SetMainScene(Scene* scene);
 	static Scene* GetMainScene();
 
 private:
-	std::vector<Entity*> entities;
+	std::mutex lock;
 
+	std::vector<Entity*> entities;
 	Camera* mainCamera = nullptr;
 
 	static Scene* mainScene;

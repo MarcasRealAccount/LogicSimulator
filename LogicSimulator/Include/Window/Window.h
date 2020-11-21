@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utilities/Logger.h"
+
 #include <stdint.h>
 #include <string>
 #include <map>
@@ -65,4 +67,7 @@ private:
 	std::string title;
 
 	std::map<uint32_t, uint32_t> windowHints;
+
+private:
+	static Logger logger;
 };

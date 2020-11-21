@@ -4,6 +4,8 @@
 #include "Scene/Scene.h"
 #include "Scene/Camera.h"
 
+Logger Renderer::logger("Renderer");
+
 Renderer::Renderer(Window* window)
 	: window(window) {}
 
@@ -48,9 +50,14 @@ GLFWwindow* Renderer::GetNativeWindowHandle() const {
 }
 
 void Renderer::RenderThreadFunc() {
-	InitRenderer();
+	try {
+		InitRenderer();
+	} catch (std::exception e) {
+		Renderer::logger.LogError("Exception was thrown when calling InitRenderer()!\n%s", e.what());
+		this->running = false;
+	}
 	while (this->running) {
-		{	// Lock the queues and add or remove the new scenes so the renderer can render the new scenes or stop rendering old scenes.
+		try {	// Lock the queues and add or remove the new scenes so the renderer can render the new scenes or stop rendering old scenes.
 			std::unique_lock<std::mutex> mlock(this->lock);
 			while (!this->scenesToAddToRender.empty()) {
 				auto& add = this->scenesToAddToRender.front();
@@ -69,23 +76,39 @@ void Renderer::RenderThreadFunc() {
 				}
 				this->scenesToRemoveFromRender.pop();
 			}
+		} catch (std::exception e) {
+			Renderer::logger.LogError("Exception was thrown when either adding or removing a scene from the renderer!\n%s", e.what());
 		}
 
-		Scene* mainScene = Scene::GetMainScene();
-		if (mainScene) {
-			Camera* mainCamera = mainScene->GetMainCamera();
-			if (mainCamera) {
-				mainCamera->width = this->window->GetData().fw;
-				mainCamera->height = this->window->GetData().fh;
-				RenderScene(mainScene, mainCamera);
+		try {
+			Scene* mainScene = Scene::GetMainScene();
+			if (mainScene) {
+				Camera* mainCamera = mainScene->GetMainCamera();
+				if (mainCamera) {
+					mainCamera->width = this->window->GetData().fw;
+					mainCamera->height = this->window->GetData().fh;
+					std::unique_lock<std::mutex> mlock(mainScene->lock);
+					RenderScene(mainScene, mainCamera);
+				}
 			}
+		} catch (std::exception e) {
+			Renderer::logger.LogError("Exception was thrown when rendering the main scene!\n%s", e.what());
 		}
 
 		for (auto& scene : this->scenesToRender) {
-			RenderScene(scene.first, scene.second);
+			try {
+				std::unique_lock<std::mutex> mlock(scene.first->lock);
+				RenderScene(scene.first, scene.second);
+			} catch (std::exception e) {
+				Renderer::logger.LogError("Exception was thrown when rendering scene {%p} using camera {%p}!\n%s", scene.first, scene.second, e.what());
+			}
 		}
 	}
-	DeInitRenderer();
+	try {
+		DeInitRenderer();
+	} catch (std::exception e) {
+		Renderer::logger.LogError("Exception was thrown when calling DeInitRenderer()!\n%s", e.what());
+	}
 }
 
 Renderer* Renderer::GetRenderer(RendererType rendererType, Window* window) {
