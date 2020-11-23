@@ -1,56 +1,33 @@
-// Total:     24 hours, 55 minutes
+// Total:     35 hours,  4 minutes
 // Session 1:  3 hours, 14 minutes
 // Session 2:  0 hours, 52 minutes
 // Session 3:  4 hours, 23 minutes
 // Session 4:  6 hours, 36 minutes
 // Session 5:  6 hours, 20 minutes
 // Session 6:  3 hours, 30 minutes
+// Session 7:  1 hours, 13 minutes
+// Session 8:  2 hours, 30 minutes
+// Session 9:  0 hours, 48 minutes
+// Session 10: 5 hours, 38 minutes
 
-#include "Window/Window.h"
-#include "Rendering/Renderer.h"
-#include "Scene/Scene.h"
-#include "Scene/Camera.h"
-#include "Utilities/Logger.h"
-
-#include "Rendering/Mesh/Primitives/Primitives.h"
-
-#include <glm/gtx/projection.hpp>
+#include "LogicSimulator.h"
 
 int main() {
-	Logger::Init();
-
-	Logger mainLogger("LogicSimulator");
-
+	Logger logger("Main");
+	LogicSimulator app;
 	try {
-		Window window;
-		window.SetSize(1280, 720);
-		Renderer* renderer = Renderer::GetRenderer(RendererType::OPENGL, &window);
-		renderer->SetWindowHints();
-		if (!window.Create()) {
-			throw std::exception("Failed to create GLFW window");
+		app.Init();
+		try {
+			app.Run();
+		} catch (std::exception e) {
+			logger.LogError("Caught an exception during app.Run()\n%s", e.what());
 		}
-		renderer->Init();
-
-		Scene scene;
-		OrthoCamera cam = OrthoCamera({ 5 });
-		cam.transform.position.x = 0.5f;
-		scene.AttachEntity(&cam);
-		scene.SetMainCamera(&cam);
-		Material mat;
-		mat.SetShader(Shader::GetShader("shader"));
-		MeshedEntity line = MeshedEntity(const_cast<Mesh2D*>(&GetRect2DPrimitive()), &mat);
-		scene.AttachEntity(&line);
-		Scene::SetMainScene(&scene);
-
-		while (!window.ShouldWindowClose()) {
-			Window::PollEvents();
+		try {
+			app.DeInit();
+		} catch (std::exception e) {
+			logger.LogError("Caught an exception during app.DeIni()\n%s", e.what());
 		}
-
-		renderer->DeInit();
-		window.Destroy();
 	} catch (std::exception e) {
-		mainLogger.LogError("%s", e.what());
+		logger.LogError("Caught an exception during app.Init()\n%s", e.what());
 	}
-	Logger::DeInit();
-	return 0;
 }

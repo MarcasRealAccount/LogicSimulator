@@ -41,6 +41,9 @@ public:
 	void GetSize(uint32_t* w, uint32_t* h) const;
 	void GetFramebufferSize(uint32_t* fw, uint32_t* fh) const;
 
+	void SetInputMode(int32_t mode, int32_t value);
+	int32_t GetInputMode(int32_t mode) const;
+
 	friend Renderer;
 
 public:
@@ -59,6 +62,11 @@ private:
 	static void WindowPosCallback(GLFWwindow* windowPtr, int x, int y);
 	static void WindowSizeCallback(GLFWwindow* windowPtr, int width, int height);
 	static void FramebufferSizeCallback(GLFWwindow* windowPtr, int width, int height);
+
+	static void KeyCallback(GLFWwindow* windowPtr, int keycode, int scancode, int action, int mods);
+	static void MouseButtonCallback(GLFWwindow* windowPtr, int button, int action, int mods);
+	static void CursorPosCallback(GLFWwindow* windowPtr, double x, double y);
+	static void ScrollCallback(GLFWwindow* windowPtr, double x, double y);
 
 private:
 	GLFWwindow* windowPtr = nullptr;
