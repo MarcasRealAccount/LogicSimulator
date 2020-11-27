@@ -1,4 +1,4 @@
-// Total:     35 hours,  4 minutes
+// Total:     35 hours, 19 minutes
 // Session 1:  3 hours, 14 minutes
 // Session 2:  0 hours, 52 minutes
 // Session 3:  4 hours, 23 minutes
@@ -9,6 +9,7 @@
 // Session 8:  2 hours, 30 minutes
 // Session 9:  0 hours, 48 minutes
 // Session 10: 5 hours, 38 minutes
+// Session 11: 0 hours, 15 minute
 
 #include "LogicSimulator.h"
 

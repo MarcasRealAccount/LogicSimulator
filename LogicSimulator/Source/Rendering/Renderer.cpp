@@ -1,8 +1,8 @@
 #include "Rendering/Renderer.h"
 #include "Rendering/Apis/OpenGL/OpenGLRenderer.h"
 #include "Window/Window.h"
-#include "Scene/Scene.h"
-#include "Scene/Camera.h"
+#include "ECS/Scene.h"
+#include "ECS/Components/CameraComponent.h"
 
 Logger Renderer::logger("Renderer");
 
@@ -23,12 +23,12 @@ void Renderer::DeInit() {
 	}
 }
 
-void Renderer::AddSceneToRender(Scene* scene, Camera* camera) {
+void Renderer::AddSceneToRender(Scene* scene, CameraComponent* camera) {
 	std::unique_lock<std::mutex> mlock(this->lock);
 	this->scenesToAddToRender.push({ scene, camera });
 }
 
-void Renderer::RemoveSceneToRender(Scene* scene, Camera* camera) {
+void Renderer::RemoveSceneToRender(Scene* scene, CameraComponent* camera) {
 	std::unique_lock<std::mutex> mlock(this->lock);
 	this->scenesToRemoveFromRender.push({ scene, camera });
 }
@@ -83,12 +83,12 @@ void Renderer::RenderThreadFunc() {
 		try {
 			Scene* mainScene = Scene::GetMainScene();
 			if (mainScene) {
-				Camera* mainCamera = mainScene->GetMainCamera();
-				if (mainCamera) {
-					mainCamera->width = this->window->GetData().fw;
-					mainCamera->height = this->window->GetData().fh;
-					std::unique_lock<std::mutex> mlock(mainScene->lock);
-					RenderScene(mainScene, mainCamera);
+				Entity* mainCamera = mainScene->GetMainCamera();
+				CameraComponent* camComp = mainCamera->GetComponent<CameraComponent>();
+				if (mainCamera && camComp) {
+					camComp->width = this->window->GetData().fw;
+					camComp->height = this->window->GetData().fh;
+					RenderScene(mainScene, camComp);
 				}
 			}
 		} catch (std::exception e) {
@@ -97,7 +97,6 @@ void Renderer::RenderThreadFunc() {
 
 		for (auto& scene : this->scenesToRender) {
 			try {
-				std::unique_lock<std::mutex> mlock(scene.first->lock);
 				RenderScene(scene.first, scene.second);
 			} catch (std::exception e) {
 				Renderer::logger.LogError("Exception was thrown when rendering scene {%p} using camera {%p}!\n%s", scene.first, scene.second, e.what());

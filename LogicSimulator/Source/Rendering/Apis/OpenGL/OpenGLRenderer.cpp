@@ -4,9 +4,12 @@
 #include "Rendering/Apis/OpenGL/Shader/OpenGLMaterialData.h"
 #include "Rendering/Apis/OpenGL/Shader/OpenGLShaderData.h"
 #include "Window/Window.h"
-#include "Scene/Scene.h"
-#include "Scene/Entity.h"
-#include "Scene/Camera.h"
+#include "ECS/Scene.h"
+#include "ECS/Entity.h"
+#include "ECS/Components/CameraComponent.h"
+#include "ECS/Components/MeshComponent.h"
+#include "ECS/Components/MaterialComponent.h"
+#include "ECS/Components/TransformComponent.h"
 
 #include "Rendering/Apis/OpenGL/GLHelpers.h"
 
@@ -35,30 +38,36 @@ void OpenGLRenderer::DeInitRenderer() {
 
 }
 
-void OpenGLRenderer::RenderScene(Scene* scene, Camera* camera) {
+void OpenGLRenderer::RenderScene(Scene* scene, CameraComponent* camera) {
 	if (camera) {
 		glViewport(0, 0, camera->width, camera->height);
 		glClearColor(camera->clearColor.x, camera->clearColor.y, camera->clearColor.z, camera->clearColor.w);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		for (auto entity : scene->GetEntities()) RenderEntity(entity, camera);
+		std::vector<MeshComponent*> meshComponents = scene->GetAllComponents<MeshComponent>();
+		for (MeshComponent* comp : meshComponents) {
+			RenderEntity(comp->GetParent(), camera);
+		}
 
 		glfwSwapBuffers(GetNativeWindowHandle());
 	}
 }
 
-void OpenGLRenderer::RenderEntity(Entity* entity, Camera* camera) {
-	Scene* scene = entity->GetScene();
-	if (!scene) return;
-
-	Mesh* mesh = entity->GetMesh();
-	Material* material = entity->GetMaterial();
+void OpenGLRenderer::RenderEntity(Entity* entity, CameraComponent* camera) {
+	MeshComponent* meshComponent = entity->GetComponent<MeshComponent>();
+	MaterialComponent* materialComponent = entity->GetComponent<MaterialComponent>();
+	Mesh* mesh = nullptr;
+	Material* material = nullptr;
+	if (meshComponent) mesh = meshComponent->mesh;
+	if (materialComponent) material = materialComponent->material;
 	if (material) {
 		if (mesh) {
-			auto transformationMatrix = material->GetUniform<glm::fmat4>("transformationMatrix");
-			if (transformationMatrix) transformationMatrix->value = entity->transform.GetTransformMatrix();
+			TransformComponent* transformComponent = entity->GetComponent<TransformComponent>();
+			if (transformComponent) {
+				auto transformationMatrix = material->GetUniform<glm::fmat4>("transformationMatrix");
+				if (transformationMatrix) transformationMatrix->value = transformComponent->GetTransformMatrix();
+			}
 			auto projectionViewMatrix = material->GetUniform<glm::fmat4>("projectionViewMatrix");
-			if (projectionViewMatrix) projectionViewMatrix->value = *camera->GetProjectionViewMatrix();
+			if (projectionViewMatrix) projectionViewMatrix->value = camera->GetProjectionViewMatrix();
 			auto time = material->GetUniform<float>("time");
 			if (time) time->value = static_cast<float>(glfwGetTime());
 

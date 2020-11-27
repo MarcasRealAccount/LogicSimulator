@@ -19,8 +19,8 @@ class Material;
 class MaterialData;
 class Shader;
 class ShaderData;
-struct Scene;
-class Camera;
+class Scene;
+class CameraComponent;
 
 class Renderer {
 public:
@@ -33,8 +33,8 @@ public:
 	void Init();
 	void DeInit();
 
-	void AddSceneToRender(Scene* scene, Camera* camera);
-	void RemoveSceneToRender(Scene* scene, Camera* camera);
+	void AddSceneToRender(Scene* scene, CameraComponent* camera);
+	void RemoveSceneToRender(Scene* scene, CameraComponent* camera);
 
 	virtual bool IsMeshDataUsable(MeshData* meshData);
 	virtual bool IsMaterialDataUsable(MaterialData* materialData);
@@ -43,7 +43,7 @@ public:
 protected:
 	virtual void InitRenderer() = 0;
 	virtual void DeInitRenderer() = 0;
-	virtual void RenderScene(Scene* scene, Camera* camera) = 0;
+	virtual void RenderScene(Scene* scene, CameraComponent* camera) = 0;
 
 	GLFWwindow* GetNativeWindowHandle() const;
 
@@ -78,9 +78,9 @@ protected:
 	Window* window;
 	bool running = false;
 
-	std::vector<std::pair<Scene*, Camera*>> scenesToRender;
-	std::queue<std::pair<Scene*, Camera*>> scenesToAddToRender;
-	std::queue<std::pair<Scene*, Camera*>> scenesToRemoveFromRender;
+	std::vector<std::pair<Scene*, CameraComponent*>> scenesToRender;
+	std::queue<std::pair<Scene*, CameraComponent*>> scenesToAddToRender;
+	std::queue<std::pair<Scene*, CameraComponent*>> scenesToRemoveFromRender;
 	std::mutex lock;
 
 private:

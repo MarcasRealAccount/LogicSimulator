@@ -18,10 +18,10 @@ public:
 protected:
 	virtual void InitRenderer() override;
 	virtual void DeInitRenderer() override;
-	virtual void RenderScene(Scene* scene, Camera* camera) override;
+	virtual void RenderScene(Scene* scene, CameraComponent* camera) override;
 
 private:
-	void RenderEntity(Entity* entity, Camera* camera);
+	void RenderEntity(Entity* entity, CameraComponent* camera);
 	void RenderMeshWithMaterial(OpenGLMeshData* meshData, OpenGLMaterialData* materialData);
 	void RenderMesh(OpenGLMeshData* meshData);
 

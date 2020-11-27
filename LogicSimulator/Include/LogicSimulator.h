@@ -4,9 +4,7 @@
 #include "Window/Window.h"
 
 class Renderer;
-struct Scene;
-class Entity;
-class Camera;
+class Scene;
 class Material;
 
 class LogicSimulator {
@@ -20,8 +18,6 @@ private:
 	Renderer* renderer = nullptr;
 
 	Scene* scene = nullptr;
-	Camera* cam = nullptr;
-	Entity* entity = nullptr;
 	Material* mat = nullptr;
 
 	Logger logger{ "LogicSimulator" };
