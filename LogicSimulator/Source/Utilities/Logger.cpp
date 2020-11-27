@@ -14,7 +14,7 @@ bool Logger::LogToFile = true;
 #ifdef _DEBUG
 bool Logger::LogToConsole = true;
 #else
-bool Logger::logToConsole = false;
+bool Logger::LogToConsole = false;
 #endif
 const char* Logger::PreviousFile = "Logs/log-previous.txt";
 const char* Logger::CurrentFile = "Logs/log-current.txt";

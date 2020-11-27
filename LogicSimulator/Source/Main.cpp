@@ -13,7 +13,7 @@
 
 #include "LogicSimulator.h"
 
-int main() {
+int main(int, char*[]) {
 	Logger logger("Main");
 	LogicSimulator app;
 	try {
@@ -32,3 +32,13 @@ int main() {
 		logger.LogError("Caught an exception during app.Init()\n%s", e.what());
 	}
 }
+
+#ifdef _WIN32
+
+#include <Windows.h>
+
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
+	return main(__argc, __argv);
+}
+
+#endif
